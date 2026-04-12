@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        Parent reference. Maven walks up the directory tree to find
+        ../pom.xml. <relativePath> makes that explicit.
+        groupId and version are inherited — only artifactId is needed here.
+    -->
+    <parent>
+        <groupId>com.example.learning</groupId>
+        <artifactId>learning-groovy</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>scripts</artifactId>
+    <packaging>jar</packaging>
+    <name>Some scripts written in Groovy</name>
+
+    <dependencies>
+        <!--
+            Groovy runtime. No <version> needed: it is inherited from
+            the parent's <dependencyManagement> section.
+        -->
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+        </dependency>
+        <!-- for the unix-scripts/ module, which uses @Grab for dependencies: -->
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ivy</groupId>
+            <artifactId>ivy</artifactId>
+        </dependency>
+    </dependencies>
+
+
+</project>

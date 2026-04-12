@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        Root / parent POM for the learning-groovy project.
+        <packaging>pom</packaging> means this module compiles nothing itself.
+        It only coordinates sub-modules and centralises shared config.
+
+        unix-scripts/ and notes/ are intentionally NOT listed as modules:
+          - unix-scripts contains standalone Groovy scripts run directly
+            with the `groovy` command; they use @Grab for dependencies.
+          - notes/ is documentation only.
+    -->
+
+    <groupId>com.example.learning</groupId>
+    <artifactId>learning-groovy</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Learning Groovy - Parent</name>
+
+    <modules>
+        <module>design-patterns</module>
+        <module>scripts</module>
+    </modules>
+
+    <properties>
+        <!-- Java 21 (LTS) — source and target must match. -->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--
+            Groovy 5 — note: group ID changed from org.codehaus.groovy (<=3.x)
+            to org.apache.groovy (4.x+).
+        -->
+        <groovy.version>4.0.31</groovy.version>
+    </properties>
+
+    <!--
+        dependencyManagement: declares versions in one place.
+        Child modules still declare the dependency but can omit <version>.
+        This prevents version drift across modules.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <!-- for the unix-scripts/ module, which uses @Grab for dependencies: -->
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>4.7.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ivy</groupId>
+                <artifactId>ivy</artifactId>
+                <version>2.5.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!--
+        pluginManagement: same idea as dependencyManagement but for plugins.
+        Child modules activate these plugins; version + config come from here.
+    -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!--
+                    Standard Java compiler plugin, locked to Java 21.
+                    Needed even for Groovy projects in case .java files exist.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>21</source>
+                        <target>21</target>
+                    </configuration>
+                </plugin>
+
+                <!--
+                    GMavenPlus: the standard plugin for compiling Groovy.
+                    It compiles src/main/groovy and src/test/groovy.
+                    Docs: https://groovy.github.io/GMavenPlus/
+                -->
+                <plugin>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <!--
+            Plugin executions declared here are inherited by ALL child modules.
+            Child modules do not need to redeclare GMavenPlus at all — they get
+            both compilation and CodeNarc linting for free.
+
+            ${project.basedir} resolves to each module's own directory at build
+            time, so the source paths and ruleset path are always correct.
+        -->
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <!-- version comes from pluginManagement above -->
+
+                <!--
+                    Plugin-level dependencies: available to GMavenPlus at
+                    runtime but NOT added to your compiled code's classpath.
+                    Groovy 4 is pinned explicitly so the `execute` goal uses
+                    the same Groovy version as the rest of the project.
+                -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.groovy</groupId>
+                        <artifactId>groovy</artifactId>
+                        <version>4.0.31</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codenarc</groupId>
+                        <artifactId>CodeNarc</artifactId>
+                        <version>3.6.0-groovy-4.0</version>
+                    </dependency>
+                </dependencies>
+
+                <executions>
+                    <!-- Compile src/main/groovy and src/test/groovy -->
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compileTests</goal>
+                        </goals>
+                    </execution>
+
+                    <!--
+                        CodeNarc linting — runs during `verify` for every
+                        module that has sources. The source-dir guard at the
+                        top of the script makes it a no-op for the parent POM
+                        itself, which has no src/main/groovy.
+                    -->
+                    <execution>
+                        <id>codenarc</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script>
+                                    import org.codenarc.CodeNarcRunner
+                                    import org.codenarc.analyzer.FilesystemSourceAnalyzer
+                                    import org.codenarc.results.Results
+
+                                    // Guard: skip modules that have no Groovy sources
+                                    // (e.g. the parent POM itself).
+                                    def srcDir = new File("${project.basedir}/src/main/groovy")
+                                    if (!srcDir.exists()) {
+                                        println "CodeNarc: no sources at ${srcDir} — skipping."
+                                        return
+                                    }
+
+                                    def analyzer = new FilesystemSourceAnalyzer()
+                                    analyzer.baseDirectory = "${project.basedir}/src/main/groovy"
+                                    analyzer.includes = '**/*.groovy'
+
+                                    def runner = new CodeNarcRunner()
+                                    runner.ruleSetFiles = "file:${project.basedir}/../rulesets/codenarc-rules.groovy"
+                                    runner.sourceAnalyzer = analyzer
+
+                                    Results results = runner.execute()
+
+                                    // Walk the Results tree (directory → files) and print
+                                    // one line per violation with file, line, rule, and source.
+                                    def printViolations
+                                    printViolations = { node ->
+                                        if (node.isFile()) {
+                                            node.violations.each { v ->
+                                                println "[P${v.rule.priority}] ${node.path} " +
+                                                        "line ${v.lineNumber}: ${v.rule.name}"
+                                                if (v.sourceLine)
+                                                    println "       ${v.sourceLine.trim()}"
+                                                if (v.message)
+                                                    println "       => ${v.message}"
+                                            }
+                                        }
+                                        node.children?.each { child -> printViolations(child) }
+                                    }
+                                    printViolations(results)
+
+                                    def p1 = results.getNumberOfViolationsWithPriority(1, true)
+                                    def p2 = results.getNumberOfViolationsWithPriority(2, true)
+                                    def p3 = results.getNumberOfViolationsWithPriority(3, true)
+
+                                    println "CodeNarc results: priority1=${p1}, priority2=${p2}, priority3=${p3}"
+
+                                    if (p1 > 0 || p2 > 0 || p3 > 0) {
+                                        throw new RuntimeException(
+                                            "CodeNarc found violations — see output above.")
+                                    }
+                                </script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
