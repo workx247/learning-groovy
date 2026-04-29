@@ -1,9 +1,9 @@
-package patterns
+package gpatterns.singleton
 
 import groovy.transform.CompileDynamic
 
 /**
- * HelloPattern.groovy — starter file for the design-patterns module.
+ * NaiveSingleton.groovy — starter file for the design-patterns module.
  *
  * Demonstrates the Singleton creational pattern using Groovy's built-in
  * @Singleton AST transformation.
@@ -21,14 +21,14 @@ import groovy.transform.CompileDynamic
  *
  * HOW TO RUN from terminal:
  *   mvn compile exec:java -pl design-patterns \
- *       -Dexec.mainClass=patterns.HelloPattern
+ *       -Dexec.mainClass=patterns.singleton.NaiveSingleton
  *
  * Or use the green ▶ button in IntelliJ.
  */
 // Generates: private constructor + static `instance` field + getInstance():
 @Singleton
 @CompileDynamic
-class HelloPattern {
+class NaiveSingleton {
 
     /**
      * Returns a greeting string.
@@ -49,6 +49,6 @@ class HelloPattern {
      * @Singleton makes the constructor private.
      */
     static void main(String[] args) {
-        println HelloPattern.instance.greet('World')
+        println NaiveSingleton.instance.greet('World')
     }
 }

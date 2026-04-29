@@ -7,10 +7,16 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 
-@java.lang.SuppressWarnings('NoWildcardImports')
-import java.nio.file.*
-import java.nio.file.attribute.*
-import java.time.*
+import java.nio.file.DirectoryStream
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.PosixFileAttributes
+import java.nio.file.attribute.PosixFilePermissions
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.Callable
 
@@ -141,11 +147,13 @@ class Ls implements Callable<Integer> {
         println(String.format('%s%s %10s %s %s', typeChar, perms, sizeText, modified, name))
     }
 
-    @SuppressWarnings('IfStatementBraces')
+    @SuppressWarnings(['IfStatementBraces', 'IfStatementCouldBeTernary'])
     private static String fileTypeChar(BasicFileAttributes attrs) {
         if (attrs.directory) return 'd'
         if (attrs.symbolicLink) return 'l'
-        return attrs.regularFile ? '-' : '?'
+        if (attrs.regularFile) return '-'
+
+        return '?'
     }
 
     private static String permissionString(Path path) {

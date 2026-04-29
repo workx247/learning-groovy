@@ -1,0 +1,3 @@
+moduleName=visitor-node-extensions
+moduleVersion=1.0-SNAPSHOT
+extensionClasses=gpatterns.visitor.extension.NodeExtensions
