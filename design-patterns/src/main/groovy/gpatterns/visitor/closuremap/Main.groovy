@@ -34,12 +34,15 @@ class Main {
         // Groovy's runtime dispatch finds the right handler automatically.
         // -------------------------------------------------------------------
         def visitor = new ClosureMapVisitor([
-            (LeftNode): { n -> println '  ClosureMapVisitor → LeftNode' },
-            (RightNode): { n ->
+            (LeftNode): { LeftNode n ->
+                println '  ClosureMapVisitor → LeftNode' },
+            (RightNode): { RightNode n ->
                 println '  ClosureMapVisitor → RightNode  (direct instance)'
             },
-            (ALeaf): { n -> println '  ClosureMapVisitor → ALeaf' },
-            (BLeaf): { n -> println '  ClosureMapVisitor → BLeaf' },
+            (ALeaf): { ALeaf n ->
+                println '  ClosureMapVisitor → ALeaf' },
+            (BLeaf): { BLeaf n ->
+                println '  ClosureMapVisitor → BLeaf' },
         ])
 
         // Groovy uses the runtime type of each variable for dispatch —

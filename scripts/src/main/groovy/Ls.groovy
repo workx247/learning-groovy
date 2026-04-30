@@ -26,15 +26,6 @@ import java.util.concurrent.Callable
     mixinStandardHelpOptions = true,
     description = 'A small ls clone supporting -l and -h.'
 )
-// dirty stuff I allow myself in scripts:
-@SuppressWarnings([
-        'ClassJavadoc',
-        'LineLength',
-        'SystemErrPrint',
-        'CatchException',
-        'IfStatementBraces',
-        'SystemExit']
-)
 class Ls implements Callable<Integer> {
 
     private static final DateTimeFormatter TS_FMT =
@@ -147,7 +138,6 @@ class Ls implements Callable<Integer> {
         println(String.format('%s%s %10s %s %s', typeChar, perms, sizeText, modified, name))
     }
 
-    @SuppressWarnings(['IfStatementBraces', 'IfStatementCouldBeTernary'])
     private static String fileTypeChar(BasicFileAttributes attrs) {
         if (attrs.directory) return 'd'
         if (attrs.symbolicLink) return 'l'
@@ -166,7 +156,6 @@ class Ls implements Callable<Integer> {
         }
     }
 
-    @SuppressWarnings('')
     private static String humanSize(long bytes) {
         if (bytes < 1024) return "${bytes}B"
 

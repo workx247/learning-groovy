@@ -174,8 +174,15 @@
                                     analyzer.baseDirectory = "${project.basedir}/src/main/groovy"
                                     analyzer.includes = '**/*.groovy'
 
+                                    // Use a dedicated ruleset for the scripts module so that
+                                    // conventions appropriate only for CLI scripts (SystemExit,
+                                    // CatchException, etc.) don't have to be suppressed inline.
+                                    def rulesetFile = project.artifactId == 'scripts'
+                                        ? "file:${project.basedir}/../rulesets/codenarc-script-rules.groovy"
+                                        : "file:${project.basedir}/../rulesets/codenarc-rules.groovy"
+
                                     def runner = new CodeNarcRunner()
-                                    runner.ruleSetFiles = "file:${project.basedir}/../rulesets/codenarc-rules.groovy"
+                                    runner.ruleSetFiles = rulesetFile
                                     runner.sourceAnalyzer = analyzer
 
                                     Results results = runner.execute()
