@@ -10,4 +10,4 @@ import groovy.transform.CompileStatic
  * (closuremap and extension) must work around this constraint.
  */
 @CompileStatic
-class LeftNode { }
+class LeftNode extends Node { }

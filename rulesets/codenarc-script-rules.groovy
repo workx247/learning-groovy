@@ -23,7 +23,7 @@
  *
  * Full rule index: https://codenarc.org/codenarc-rule-index.html
  *
- * STRATEGY: blacklist (same as codenarc-rules.groovy)
+ * STRATEGY: blacklist (same as codenarc-script-rules.groovy)
  * All rules from each included category are ACTIVE by default.
  * Rules that do not apply are disabled inline.
  *
@@ -55,8 +55,9 @@ ruleset {
     ruleset('rulesets/comments.xml') {
 
         ClassJavadoc {
-            // The class IS the script entry point; a Javadoc header duplicates
-            // the @Command description annotation and adds no value.
+            // We usually use picocli's @Command annotation to provide a
+            // description of the script's purpose and usage,
+            // which serves the same function as a Javadoc header for a library class.
             enabled = false
         }
 
@@ -95,6 +96,12 @@ ruleset {
         IfStatementCouldBeTernary {
             // Multi-branch early-return chains (e.g. a type-char dispatcher)
             // are clearer as sequential if/return than as nested ternaries.
+            enabled = false
+        }
+        ImplicitClosureParameter {
+            // `it` is a perfectly good name for the implicit closure parameter in
+            // short closures; enforcing an explicit name adds noise without
+            // improving readability.
             enabled = false
         }
 

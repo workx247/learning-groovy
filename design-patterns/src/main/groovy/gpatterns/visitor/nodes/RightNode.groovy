@@ -10,4 +10,4 @@ import groovy.transform.CompileStatic
  * instance AND as the common supertype of ALeaf and BLeaf.
  */
 @CompileStatic
-class RightNode { }
+class RightNode extends Node { }
