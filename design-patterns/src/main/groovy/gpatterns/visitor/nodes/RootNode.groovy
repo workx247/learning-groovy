@@ -1,5 +1,6 @@
 package gpatterns.visitor.nodes
 
+import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
 /**
@@ -7,6 +8,5 @@ import groovy.transform.CompileStatic
  * LeftNode, RightNode, ALeaf, and BLeaf all implement this interface.
  */
 @CompileStatic
-sealed class Node permits LeftNode, RightNode {
-
-}
+@Canonical
+sealed class RootNode permits LeftNode, RightNode { }

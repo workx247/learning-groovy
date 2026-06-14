@@ -4,6 +4,7 @@ import gpatterns.visitor.nodes.ALeaf
 import gpatterns.visitor.nodes.BLeaf
 import gpatterns.visitor.nodes.LeftNode
 import gpatterns.visitor.nodes.RightNode
+import gpatterns.visitor.nodes.RootNode
 import groovy.transform.CompileStatic
 
 /**
@@ -18,22 +19,27 @@ import groovy.transform.CompileStatic
 class PrintVisitor implements Visitor {
 
     @Override
-    void visit(LeftNode node) {
-        println '  PrintVisitor → LeftNode'
+    String visit(RootNode node) {
+        return '  PrintVisitor -> RootNode'
     }
 
     @Override
-    void visit(RightNode node) {
-        println '  PrintVisitor → RightNode  (direct instance)'
+    String visit(LeftNode node) {
+        return '  PrintVisitor -> LeftNode'
     }
 
     @Override
-    void visit(ALeaf leaf) {
-        println '  PrintVisitor → ALeaf'
+    String visit(RightNode node) {
+        return '  PrintVisitor -> RightNode'
     }
 
     @Override
-    void visit(BLeaf leaf) {
-        println '  PrintVisitor → BLeaf'
+    String visit(ALeaf leaf) {
+        return '  PrintVisitor -> ALeaf'
+    }
+
+    @Override
+    String visit(BLeaf leaf) {
+        return '  PrintVisitor -> BLeaf'
     }
 }

@@ -4,6 +4,7 @@ import gpatterns.visitor.nodes.ALeaf
 import gpatterns.visitor.nodes.BLeaf
 import gpatterns.visitor.nodes.LeftNode
 import gpatterns.visitor.nodes.RightNode
+import gpatterns.visitor.nodes.RootNode
 import groovy.transform.CompileStatic
 
 /**
@@ -15,8 +16,9 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 interface Visitor {
-    void visit(LeftNode node)
-    void visit(RightNode node)
-    void visit(ALeaf leaf)
-    void visit(BLeaf leaf)
+    String visit(RootNode node)
+    String visit(LeftNode node)
+    String visit(RightNode node)
+    String visit(ALeaf leaf)
+    String visit(BLeaf leaf)
 }

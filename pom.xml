@@ -6,6 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!--
+        Usage:
+          mvn clean install # normal — CodeNarc runs
+          mvn clean install -DskipCodeNarc=true # fast — CodeNarc skipped
+
         Root / parent POM for the learning-groovy project.
         <packaging>pom</packaging> means this module compiles nothing itself.
         It only coordinates sub-modules and centralises shared config.
@@ -28,15 +32,29 @@
     </modules>
 
     <properties>
-        <!-- Java 21 (LTS) — source and target must match. -->
+        <!-- LEGACY
+          Java 21 (LTS) — source and target must match.
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        -->
+
+        <!-- more correct style - this project should work for 21 and 11, though -->
+        <maven.compiler.release>21</maven.compiler.release>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--
             Groovy 5 — note: group ID changed from org.codehaus.groovy (<=3.x)
             to org.apache.groovy (4.x+).
+            -> we are not using groovy 5, because CodeNarc does not yet support
+             it as of mid-2026.
         -->
         <groovy.version>4.0.31</groovy.version>
+        <!--
+            Pass -DskipCodeNarc=true on the command line to bypass linting.
+            Useful during development when you just want a fast compile+run cycle.
+            Example: mvn verify -DskipCodeNarc=true
+        -->
+        <skipCodeNarc>false</skipCodeNarc>
     </properties>
 
     <!--
@@ -162,9 +180,17 @@
                                     import org.codenarc.analyzer.FilesystemSourceAnalyzer
                                     import org.codenarc.results.Results
 
+                                    // Guard: skip all linting when -DskipCodeNarc=true is passed.
+                                    // Maven interpolates ${skipCodeNarc} before Groovy sees the
+                                    // script, so this becomes a plain string comparison at runtime.
+                                    if ('${skipCodeNarc}' == 'true') {
+                                        println 'CodeNarc: skipped (skipCodeNarc=true).'
+                                        return
+                                    }
+
                                     // Guard: skip modules that have no Groovy sources
                                     // (e.g. the parent POM itself).
-                                    def srcDir = new File("${project.basedir}/src/main/groovy")
+                                    def srcDir = new File(project.basedir, 'src/main/groovy')
                                     if (!srcDir.exists()) {
                                         println "CodeNarc: no sources at ${srcDir} — skipping."
                                         return
@@ -178,8 +204,8 @@
                                     // conventions appropriate only for CLI scripts (SystemExit,
                                     // CatchException, etc.) don't have to be suppressed inline.
                                     def rulesetFile = project.artifactId == 'scripts'
-                                        ? "file:${project.basedir}/../rulesets/codenarc-script-rules.groovy"
-                                        : "file:${project.basedir}/../rulesets/codenarc-rules.groovy"
+                                        ? new File(project.basedir, '../rulesets/codenarc-script-rules.groovy').toURI().toString()
+                                        : new File(project.basedir, '../rulesets/codenarc-rules.groovy').toURI().toString()
 
                                     def runner = new CodeNarcRunner()
                                     runner.ruleSetFiles = rulesetFile

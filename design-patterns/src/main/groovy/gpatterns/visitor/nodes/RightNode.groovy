@@ -1,5 +1,6 @@
 package gpatterns.visitor.nodes
 
+import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
 /**
@@ -10,4 +11,5 @@ import groovy.transform.CompileStatic
  * instance AND as the common supertype of ALeaf and BLeaf.
  */
 @CompileStatic
-class RightNode extends Node { }
+@Canonical
+sealed class RightNode extends RootNode permits ALeaf, BLeaf { }

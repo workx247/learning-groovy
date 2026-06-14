@@ -34,7 +34,7 @@ class Main {
         // Groovy's runtime dispatch finds the right handler automatically.
         // -------------------------------------------------------------------
         def visitor = new ClosureMapVisitor([
-            (LeftNode): { LeftNode n ->
+            (LeftNode) : { LeftNode n ->
                 println '  ClosureMapVisitor → LeftNode' },
             (RightNode): { RightNode n ->
                 println '  ClosureMapVisitor → RightNode  (direct instance)'
@@ -74,7 +74,7 @@ class Main {
         //          would break every implementor at compile time.
         // -------------------------------------------------------------------
         def partialVisitor = new ClosureMapVisitor([
-            (LeftNode): { n -> println '  partial → LeftNode' },
+            (LeftNode) : { n -> println '  partial → LeftNode' },
             (RightNode): { n ->
                 def type = n.class.simpleName
                 println "  partial → RightNode fallback (runtime type: ${type})"

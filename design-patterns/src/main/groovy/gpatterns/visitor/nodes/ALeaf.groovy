@@ -1,5 +1,6 @@
 package gpatterns.visitor.nodes
 
+import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
 /**
@@ -7,4 +8,5 @@ import groovy.transform.CompileStatic
  * No accept() — third-party simulation.
  */
 @CompileStatic
-class ALeaf extends RightNode { }
+@Canonical
+final class ALeaf extends RightNode { }

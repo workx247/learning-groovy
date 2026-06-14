@@ -4,19 +4,42 @@ import gpatterns.visitor.nodes.ALeaf
 import gpatterns.visitor.nodes.BLeaf
 import gpatterns.visitor.nodes.LeftNode
 import gpatterns.visitor.nodes.RightNode
-import groovy.transform.CompileStatic
+import gpatterns.visitor.nodes.RootNode
+import groovy.transform.CompileDynamic
+
+// import groovy.transform.CompileStatic
 
 /**
  * Demonstrates that Groovy's runtime dispatch selects the correct visit()
  * overload based on actual type, even when the declared type is a supertype.
  */
-@CompileStatic
+@CompileDynamic
 @SuppressWarnings(['PackageName',
         'EmptyClass',
         'UnnecessaryToString',
         'ConsecutiveBlankLines',
         'UnnecessaryObjectReferences'])
 class Main {
+
+    static RootNode mkRootNode() {
+        return new RootNode()
+    }
+
+    static RootNode mkLeftNode() {
+        return new LeftNode()
+    }
+
+    static RootNode mkRightNode() {
+        return new RightNode()
+    }
+
+    static RootNode mkALeaf() {
+        return new ALeaf()
+    }
+
+    static RootNode mkBLeaf() {
+        return new BLeaf()
+    }
 
     static void main(String[] args) {
 
@@ -29,20 +52,20 @@ class Main {
         // Groovy finds NodeExtensions.accept(Xxx self, Visitor v) at runtime
         // and calls it transparently — as if it had always been there.
         // -------------------------------------------------------------------
-        def root = new gpatterns.visitor.nodes.Node()
-        def left  = new LeftNode()
-        def right = new RightNode()
-        def aLeaf = new ALeaf()
-        def bLeaf = new BLeaf()
-        gpatterns.visitor.nodes.Node node = new BLeaf()
+        def root  = mkRootNode()
+        def left  = mkLeftNode()
+        def right = mkRightNode()
+        def aLeaf = mkALeaf()
+        def bLeaf = mkBLeaf()
+        RootNode node = new BLeaf()
 
         println '=== Extension-module visitor  [declared type: def] ==='
-        visitor.visit(root)
-        visitor.visit(left)
-        visitor.visit(right)  // → NodeExtensions → visit(RightNode)
-        visitor.visit(aLeaf)  // → NodeExtensions → visit(ALeaf)
-        visitor.visit(bLeaf)  // → NodeExtensions → visit(BLeaf)
-        visitor.visit(node)
+        println visitor.visit(root)
+        println visitor.visit(left)
+        println visitor.visit(right)  // → NodeExtensions → visit(RightNode)
+        println visitor.visit(aLeaf)  // → NodeExtensions → visit(ALeaf)
+        println visitor.visit(bLeaf)  // → NodeExtensions → visit(BLeaf)
+        println visitor.visit(node)
 
 
         println()

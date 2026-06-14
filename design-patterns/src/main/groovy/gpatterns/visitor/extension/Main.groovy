@@ -4,6 +4,8 @@ import gpatterns.visitor.nodes.ALeaf
 import gpatterns.visitor.nodes.BLeaf
 import gpatterns.visitor.nodes.LeftNode
 import gpatterns.visitor.nodes.RightNode
+import gpatterns.visitor.nodes.RootNode
+import groovy.transform.CompileDynamic
 
 /**
  * Main — demonstrates the extension-module visitor.
@@ -25,8 +27,29 @@ import gpatterns.visitor.nodes.RightNode
  *   mvn compile exec:java -pl design-patterns \
  *       -Dexec.mainClass=gpatterns.visitor.extension.Main
  */
+@CompileDynamic
 @SuppressWarnings('CompileStatic')
 class Main {
+
+    static RootNode mkRootNode() {
+        return new RootNode()
+    }
+
+    static RootNode mkLeftNode() {
+        return new LeftNode()
+    }
+
+    static RootNode mkRightNode() {
+        return new RightNode()
+    }
+
+    static RootNode mkALeaf() {
+        return new ALeaf()
+    }
+
+    static RootNode mkBLeaf() {
+        return new BLeaf()
+    }
 
     static void main(String[] args) {
 
@@ -39,39 +62,18 @@ class Main {
         // Groovy finds NodeExtensions.accept(Xxx self, Visitor v) at runtime
         // and calls it transparently — as if it had always been there.
         // -------------------------------------------------------------------
-        def left  = new LeftNode()
-        def right = new RightNode()
-        def aLeaf = new ALeaf()
-        def bLeaf = new BLeaf()
+        def node  = mkRootNode()
+        def left  = mkLeftNode()
+        def right = mkRightNode()
+        def aLeaf = mkALeaf()
+        def bLeaf = mkBLeaf()
 
-        println '=== Extension-module visitor  [declared type: def] ==='
-        left.accept(visitor)   // → NodeExtensions → visit(LeftNode)
-        right.accept(visitor)  // → NodeExtensions → visit(RightNode)
-        aLeaf.accept(visitor)  // → NodeExtensions → visit(ALeaf)
-        bLeaf.accept(visitor)  // → NodeExtensions → visit(BLeaf)
-
+        println '--- Extension-module visitor  [declared type: def] ---'
+        println node.accept(visitor)
+        println left.accept(visitor)
+        println right.accept(visitor)
+        println aLeaf.accept(visitor)
+        println bLeaf.accept(visitor)
         println()
-
-        // -------------------------------------------------------------------
-        // DEMO 2 — declared type is the INTERMEDIATE class RightNode.
-        //
-        // In Java, a variable declared as RightNode dispatches overloaded
-        // methods to visit(RightNode) regardless of the runtime type.
-        //
-        // In Groovy, runtime dispatch applies to extension methods too.
-        // The runtime type is ALeaf / BLeaf, so Groovy selects
-        // NodeExtensions.accept(ALeaf, ...) / accept(BLeaf, ...) —
-        // even though the declared type is RightNode.
-        //
-        // This is the key advantage of Groovy dynamic dispatch: the
-        // Java `this`-trick in accept() exists purely to work around
-        // Java's compile-time overload resolution. Groovy does not need it.
-        // -------------------------------------------------------------------
-        RightNode aAsRight = new ALeaf()
-        RightNode bAsRight = new BLeaf()
-
-        println '=== Extension-module visitor  [declared type: RightNode] ==='
-        aAsRight.accept(visitor)   // → visit(ALeaf)  — NOT visit(RightNode)!
-        bAsRight.accept(visitor)   // → visit(BLeaf)  — NOT visit(RightNode)!
     }
 }

@@ -1,5 +1,6 @@
 package gpatterns.visitor.nodes
 
+import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
 /**
@@ -10,4 +11,5 @@ import groovy.transform.CompileStatic
  * (closuremap and extension) must work around this constraint.
  */
 @CompileStatic
-class LeftNode extends Node { }
+@Canonical
+final class LeftNode extends RootNode { }

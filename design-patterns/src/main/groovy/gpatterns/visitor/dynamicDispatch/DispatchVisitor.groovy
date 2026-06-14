@@ -1,7 +1,7 @@
 package gpatterns.visitor.dynamicDispatch
 
-// import gpatterns.visitor.extension.Visitor
-import gpatterns.visitor.nodes.Node
+import gpatterns.visitor.extension.Visitor
+import gpatterns.visitor.nodes.RootNode
 import gpatterns.visitor.nodes.ALeaf
 import gpatterns.visitor.nodes.BLeaf
 import gpatterns.visitor.nodes.LeftNode
@@ -15,26 +15,31 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 @SuppressWarnings(['PackageName', 'UnnecessaryToString'])
-class DispatchVisitor { // implements Visitor {
+class DispatchVisitor implements Visitor {
 
-    static void visit(Node element) {
-        println 'Visiting Node' + element.toString()
+    @Override
+    String visit(RootNode element) {
+        return 'Visiting RootNode ' + element.toString()
     }
 
-    static void visit(LeftNode element) {
-        println 'Visiting LeftNode' + element.toString()
+    @Override
+    String visit(LeftNode element) {
+        return 'Visiting LeftNode ' + element.toString()
     }
 
-    static void visit(RightNode element) {
-        println 'Visiting RightNode' + element.toString()
+    @Override
+    String visit(RightNode element) {
+        return 'Visiting RightNode ' + element.toString()
     }
 
-    static void visit(ALeaf element) {
-        println 'Visiting ALeaf' + element.toString()
+    @Override
+    String visit(ALeaf element) {
+        return 'Visiting ALeaf ' + element.toString()
     }
 
-//    static void visit(BLeaf element) {
-//        println 'Visiting BLeaf' + element.toString()
-//    }
+    @Override
+    String visit(BLeaf element) {
+        return 'Visiting BLeaf ' + element.toString()
+    }
 
 }

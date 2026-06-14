@@ -4,6 +4,7 @@ import gpatterns.visitor.nodes.ALeaf
 import gpatterns.visitor.nodes.BLeaf
 import gpatterns.visitor.nodes.LeftNode
 import gpatterns.visitor.nodes.RightNode
+import gpatterns.visitor.nodes.RootNode
 import groovy.transform.CompileStatic
 
 /**
@@ -44,24 +45,29 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class NodeExtensions {
 
-    static void accept(LeftNode self, Visitor visitor) {
+    static String accept(RootNode self, Visitor visitor) {
         // `self` is statically typed LeftNode → resolves to visit(LeftNode).
-        visitor.visit(self)
+        return visitor.visit(self)
     }
 
-    static void accept(RightNode self, Visitor visitor) {
+    static String accept(LeftNode self, Visitor visitor) {
+        // `self` is statically typed LeftNode → resolves to visit(LeftNode).
+        return visitor.visit(self)
+    }
+
+    static String accept(RightNode self, Visitor visitor) {
         // Reached only for direct RightNode instances (not ALeaf/BLeaf),
         // because those two have their own more-specific overloads below.
-        visitor.visit(self)
+        return visitor.visit(self)
     }
 
-    static void accept(ALeaf self, Visitor visitor) {
+    static String accept(ALeaf self, Visitor visitor) {
         // `self` is statically typed ALeaf → resolves to visit(ALeaf).
-        visitor.visit(self)
+        return visitor.visit(self)
     }
 
-    static void accept(BLeaf self, Visitor visitor) {
+    static String accept(BLeaf self, Visitor visitor) {
         // `self` is statically typed BLeaf → resolves to visit(BLeaf).
-        visitor.visit(self)
+        return visitor.visit(self)
     }
 }
