@@ -1,4 +1,6 @@
-package jpatterns.visitor;
+package jpatterns.visitor.patternmatch;
+
+import jpatterns.visitor.classicvisitor.*;
 
 /**
  * AltMain — same tree, dispatched using Java 21 switch pattern matching
@@ -34,7 +36,7 @@ package jpatterns.visitor;
 public class AltMain {
 
     // Simulates a new subtype added to the hierarchy by someone who forgot
-    // to update the switch statement — used in the silent-trap demo below.
+    // to update the switch statement — used in PatternMatchTest.
     static class CLeaf extends RightNode { }
 
     /**
@@ -51,7 +53,7 @@ public class AltMain {
      *      subtypes. Any boolean expression is valid — field checks, method
      *      calls, comparisons.
      *
-     *   3. DEFAULT: required because Element is not sealed. The compiler cannot
+     *   3. DEFAULT: required because RootNode is not sealed. The compiler cannot
      *      prove the four explicit arms cover every possible subtype.
      */
     static String describe(Object node) {
@@ -67,7 +69,7 @@ public class AltMain {
                              -> "RightNode  (direct instance)";
 
             // Catches any RightNode subtype the switch does not explicitly list
-            // (e.g. the CLeaf we add below). No compile error, no warning.
+            // (e.g. CLeaf). No compile error, no warning.
             case RightNode r -> "Unrecognised RightNode subtype: "
                                     + r.getClass().getSimpleName();
 
@@ -75,41 +77,5 @@ public class AltMain {
 
             default          -> "Unknown type: " + node.getClass().getSimpleName();
         };
-    }
-
-    public static void main(String[] args) {
-
-        // All declared as Element — same realistic scenario as Main.
-        Element left  = new LeftNode();
-        Element right = new RightNode();
-        Element aLeaf = new ALeaf();
-        Element bLeaf = new BLeaf();
-
-        System.out.println("=== Switch pattern matching  [declared type: Element] ===");
-        System.out.println(describe(left));    // → LeftNode
-        System.out.println(describe(right));   // → RightNode (direct instance)
-        System.out.println(describe(aLeaf));   // → ALeaf
-        System.out.println(describe(bLeaf));   // → BLeaf
-
-        System.out.println();
-
-        // -----------------------------------------------------------------------
-        // THE SILENT TRAP
-        //
-        // CLeaf extends RightNode but has no case arm in describe().
-        //
-        // With Visitor: adding a new type means adding visit(CLeaf) to the
-        // Visitor interface, which immediately causes a compile error in every
-        // implementor — you are forced to handle it.
-        //
-        // With switch: CLeaf silently falls through to `case RightNode r`
-        // (not even `default` — it IS a RightNode). No compile error, no
-        // warning, no crash. The program runs and silently gives the wrong answer.
-        // A test would catch it; the compiler won't.
-        // -----------------------------------------------------------------------
-        System.out.println("=== Silent trap: CLeaf is not in the switch ===");
-        Element cLeaf = new CLeaf();
-        System.out.println(describe(cLeaf));
-        // → Unrecognised RightNode subtype: CLeaf
     }
 }

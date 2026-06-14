@@ -1,4 +1,4 @@
-package jpatterns.visitor;
+package jpatterns.visitor.classicvisitor;
 
 /**
  * LeftNode — a direct child of Node with no subclasses.
@@ -7,12 +7,12 @@ package jpatterns.visitor;
  * visit(LeftNode) because there are no subclasses that could
  * introduce any ambiguity.
  */
-public class LeftNode implements Element {
+public class LeftNode implements RootNode {
 
     @Override
-    public void accept(Visitor visitor) {
+    public String accept(Visitor visitor) {
         // `this` is statically typed LeftNode here, so the compiler
-        // binds this call to visit(LeftNode) — not visit(Node).
-        visitor.visit(this);
+        // binds this call to visit(LeftNode) — not visit(RootNode).
+        return visitor.visit(this);
     }
 }

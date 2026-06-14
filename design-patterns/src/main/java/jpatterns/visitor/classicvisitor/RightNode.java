@@ -1,4 +1,4 @@
-package jpatterns.visitor;
+package jpatterns.visitor.classicvisitor;
 
 /**
  * RightNode — an intermediate node in the hierarchy.
@@ -13,10 +13,10 @@ package jpatterns.visitor;
  * type, the Visitor interface needs a visit(RightNode) overload
  * separate from visit(ALeaf) and visit(BLeaf).
  */
-public class RightNode implements Element {
+public class RightNode implements RootNode {
 
     @Override
-    public void accept(Visitor visitor) {
+    public String accept(Visitor visitor) {
         // `this` is statically typed RightNode here.
         //
         // WATCH OUT: if ALeaf or BLeaf did NOT override accept(), they
@@ -25,6 +25,6 @@ public class RightNode implements Element {
         // would silently dispatch to visit(RightNode) instead of
         // visit(ALeaf) or visit(BLeaf) — the subtype identity would be
         // lost. That is why every concrete subclass MUST override accept().
-        visitor.visit(this);
+        return visitor.visit(this);
     }
 }

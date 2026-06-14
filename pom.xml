@@ -7,8 +7,8 @@
 
     <!--
         Usage:
-          mvn clean install # normal — CodeNarc runs
-          mvn clean install -DskipCodeNarc=true # fast — CodeNarc skipped
+          mvn clean install # normal — CodeNarc skips
+          mvn clean install -DskipCodeNarc=false # fast — CodeNarc runs
 
         Root / parent POM for the learning-groovy project.
         <packaging>pom</packaging> means this module compiles nothing itself.
@@ -54,7 +54,11 @@
             Useful during development when you just want a fast compile+run cycle.
             Example: mvn verify -DskipCodeNarc=true
         -->
-        <skipCodeNarc>false</skipCodeNarc>
+        <skipCodeNarc>true</skipCodeNarc>
+        <!-- Single source of truth for the Lombok version.
+             Referenced in both dependencyManagement and the compiler
+             plugin's annotationProcessorPaths below. -->
+        <lombok.version>1.18.46</lombok.version>
     </properties>
 
     <!--
@@ -80,6 +84,71 @@
                 <artifactId>ivy</artifactId>
                 <version>2.5.3</version>
             </dependency>
+            <!--
+                Lombok — compile-time annotation processor.
+                <scope>provided</scope> means it is on the compile classpath
+                but NOT packaged into the final jar.
+                Child modules declare the dependency without a version;
+                Maven picks it up from here.
+            -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- JUnit 5 — test framework. The aggregator artifact pulls in
+                 both the API (needed at compile time) and the engine
+                 (needed at runtime for Surefire to discover tests). -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.10.3</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Mockito — for mock() / verify() in tests. -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.12.0</version>
+                <scope>test</scope>
+            </dependency>
+            <!--
+                junit-platform-engine and junit-platform-launcher pinned to
+                1.10.3 to match junit-jupiter:5.10.3. Without this,
+                spock-core:2.3 pulls in engine:1.9.0 (its direct dependency)
+                via Maven's nearest-wins rule, leaving the engine at 1.9.0
+                while the launcher (used by Surefire) is at 1.10+ or 1.11+,
+                causing a NoSuchMethodError at runtime. Declaring them here
+                in dependencyManagement overrides the transitive version
+                selection for all child modules.
+            -->
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-engine</artifactId>
+                <version>1.10.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>1.10.3</version>
+                <scope>test</scope>
+            </dependency>
+            <!--
+                Spock — BDD-style test framework for Groovy.
+                The version suffix "-groovy-4.0" pins Spock to the Groovy 4.x
+                API. Spock specs extend spock.lang.Specification and use
+                given:/when:/then: blocks instead of @Test annotations.
+                Compatible with JUnit 5's engine (Surefire 3.x discovers them
+                automatically via the JUnit Platform launcher).
+            -->
+            <dependency>
+                <groupId>org.spockframework</groupId>
+                <artifactId>spock-core</artifactId>
+                <version>2.3-groovy-4.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -99,8 +168,29 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
                     <configuration>
-                        <source>21</source>
-                        <target>21</target>
+                        <!--
+                            <release> replaces the old <source>/<target> pair.
+                            It sets source, target, and the bootstrap classpath
+                            all at once, which is correct for Java 9+.
+                            The value comes from the maven.compiler.release
+                            property defined above; no need to repeat it here.
+                        -->
+                        <release>${maven.compiler.release}</release>
+                        <!--
+                            annotationProcessorPaths is the reliable way to
+                            register Lombok. Classpath scanning (the fallback)
+                            is deprecated in Java 21 and will stop working in
+                            a future release — hence the warning we saw before.
+                            The version must be explicit here; it does NOT
+                            inherit from dependencyManagement.
+                        -->
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
 
@@ -113,6 +203,30 @@
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>3.0.2</version>
+                </plugin>
+                <!--
+                    Surefire 3.x is required to discover JUnit 5 tests.
+                    The default version bundled with Maven 3.x is 2.x,
+                    which only supports JUnit 4.
+
+                    The <includes> list extends the default patterns
+                    (*Test, *Tests, *TestCase) to also pick up Spock specs
+                    (*Spec). Without this, Surefire silently skips any class
+                    whose name ends in Spec, even though Spock registers them
+                    correctly with the JUnit Platform engine.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                    <configuration>
+                        <includes>
+                            <include>**/*Test</include>
+                            <include>**/*Tests</include>
+                            <include>**/*TestCase</include>
+                            <include>**/*Spec</include>
+                        </includes>
+                    </configuration>
                 </plugin>
 
             </plugins>

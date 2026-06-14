@@ -30,6 +30,43 @@
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
         </dependency>
+        <!--
+            Lombok — version and scope (provided) come from the parent's
+            dependencyManagement. No need to repeat them here.
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <!--
+            Spock — BDD-style test framework for Groovy.
+            Version and scope are inherited from the parent's dependencyManagement.
+        -->
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+        </dependency>
+        <!--
+            Explicit junit-platform-launcher dependency.
+            Surefire 3.x uses whatever launcher it finds on the test classpath;
+            if none is present it falls back to its own bundled version, which
+            may be a different Platform release than junit-platform-engine.
+            Declaring it here ensures all three Platform artifacts
+            (commons, engine, launcher) resolve to the same 1.10.3 version
+            pinned in the parent's dependencyManagement.
+        -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+        </dependency>
     </dependencies>
 
 

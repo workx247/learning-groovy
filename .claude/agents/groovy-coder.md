@@ -27,13 +27,10 @@ Multi-module Maven project:
 - Line length: 80 characters maximum (CodeNarc enforces this).
 - Comments: explain *what* and *why*, not just what the identifier already says.
 - Prefer explicit `return` statements in Groovy methods.
-- Use `@SuppressWarnings(['RuleName'])` to suppress a CodeNarc rule on a single
-  class or method — do not disable rules globally in the ruleset.
+- Don't `@SuppressWarnings(['RuleName'])`, and also to not alter rulesets on your own.
 - Groovy extension modules and `@CompileStatic` are incompatible; you may see a
   harmless compile-time WARNING — do not try to silence it.
-- Maps with expression keys (e.g. `[(key): value]`) need
-  `@SuppressWarnings(['SpaceAroundMapEntryColon'])` — do not add a space before
-  the colon to work around it.
+
 
 ## Useful Maven commands
 

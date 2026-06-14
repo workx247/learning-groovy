@@ -1,4 +1,4 @@
-package jpatterns.visitor;
+package jpatterns.visitor.classicvisitor;
 
 /**
  * Visitor — declares one visit() overload for every concrete node type.
@@ -24,8 +24,8 @@ package jpatterns.visitor;
  * method — a useful compile-time safety net.
  */
 public interface Visitor {
-    void visit(LeftNode node);
-    void visit(RightNode node);
-    void visit(ALeaf leaf);
-    void visit(BLeaf leaf);
+    String visit(LeftNode node);
+    String visit(RightNode node);
+    String visit(ALeaf leaf);
+    String visit(BLeaf leaf);
 }

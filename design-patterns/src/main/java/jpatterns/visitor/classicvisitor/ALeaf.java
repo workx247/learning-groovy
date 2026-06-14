@@ -1,4 +1,4 @@
-package jpatterns.visitor;
+package jpatterns.visitor.classicvisitor;
 
 /**
  * ALeaf — a concrete leaf that extends RightNode.
@@ -14,8 +14,8 @@ package jpatterns.visitor;
 public class ALeaf extends RightNode {
 
     @Override
-    public void accept(Visitor visitor) {
+    public String accept(Visitor visitor) {
         // `this` is ALeaf here → compiler binds to visit(ALeaf).
-        visitor.visit(this);
+        return visitor.visit(this);
     }
 }

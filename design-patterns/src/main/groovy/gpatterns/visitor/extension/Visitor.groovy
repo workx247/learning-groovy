@@ -1,10 +1,10 @@
 package gpatterns.visitor.extension
 
-import gpatterns.visitor.nodes.ALeaf
-import gpatterns.visitor.nodes.BLeaf
-import gpatterns.visitor.nodes.LeftNode
-import gpatterns.visitor.nodes.RightNode
-import gpatterns.visitor.nodes.RootNode
+import jpatterns.visitor.nodes.ALeaf
+import jpatterns.visitor.nodes.BLeaf
+import jpatterns.visitor.nodes.LeftNode
+import jpatterns.visitor.nodes.RightNode
+import jpatterns.visitor.nodes.RootNode
 import groovy.transform.CompileStatic
 
 /**

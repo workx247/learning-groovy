@@ -1,4 +1,4 @@
-package jpatterns.visitor;
+package jpatterns.visitor.classicvisitor;
 
 /**
  * BLeaf — a concrete leaf that extends RightNode.
@@ -9,8 +9,8 @@ package jpatterns.visitor;
 public class BLeaf extends RightNode {
 
     @Override
-    public void accept(Visitor visitor) {
+    public String accept(Visitor visitor) {
         // `this` is BLeaf here → compiler binds to visit(BLeaf).
-        visitor.visit(this);
+        return visitor.visit(this);
     }
 }

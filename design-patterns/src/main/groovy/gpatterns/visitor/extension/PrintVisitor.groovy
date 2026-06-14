@@ -1,10 +1,10 @@
 package gpatterns.visitor.extension
 
-import gpatterns.visitor.nodes.ALeaf
-import gpatterns.visitor.nodes.BLeaf
-import gpatterns.visitor.nodes.LeftNode
-import gpatterns.visitor.nodes.RightNode
-import gpatterns.visitor.nodes.RootNode
+import jpatterns.visitor.nodes.ALeaf
+import jpatterns.visitor.nodes.BLeaf
+import jpatterns.visitor.nodes.LeftNode
+import jpatterns.visitor.nodes.RightNode
+import jpatterns.visitor.nodes.RootNode
 import groovy.transform.CompileStatic
 
 /**
@@ -20,26 +20,26 @@ class PrintVisitor implements Visitor {
 
     @Override
     String visit(RootNode node) {
-        return '  PrintVisitor -> RootNode'
+        return 'PrintVisitor -> RootNode'
     }
 
     @Override
     String visit(LeftNode node) {
-        return '  PrintVisitor -> LeftNode'
+        return 'PrintVisitor -> LeftNode'
     }
 
     @Override
     String visit(RightNode node) {
-        return '  PrintVisitor -> RightNode'
+        return 'PrintVisitor -> RightNode'
     }
 
     @Override
     String visit(ALeaf leaf) {
-        return '  PrintVisitor -> ALeaf'
+        return 'PrintVisitor -> ALeaf'
     }
 
     @Override
     String visit(BLeaf leaf) {
-        return '  PrintVisitor -> BLeaf'
+        return 'PrintVisitor -> BLeaf'
     }
 }
